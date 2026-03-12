@@ -1,0 +1,37 @@
+1. Estrutura de Login e Cadastro (Base)
+A forma mais moderna de lidar com isso no Next.js (App Router) é via Server Actions. 
+Cadastro: Crie um formulário que envie dados (email, senha) para uma Server Action. Use bibliotecas como bcrypt para realizar o hash da senha antes de salvar no banco de dados (ex: Prisma, PostgreSQL ou MongoDB).
+Login: Verifique as credenciais no servidor. Se válidas, crie uma sessão usando cookies seguros (httpOnly) ou JWT.
+Auth.js: Para agilizar, o Auth.js automatiza a gestão de sessões, suporte a provedores (Google, GitHub) e proteção de rotas via middleware. 
+YouTube
+YouTube
+ +3
+2. Implementando Autenticação por QR Code
+Existem dois cenários comuns para o uso de QR Code: 
+Cenário A: Segundo Fator de Autenticação (2FA/TOTP) 
+É o método onde o usuário escaneia um código para configurar aplicativos como Google Authenticator. 
+DEV Community
+DEV Community
+ +4
+Gerar Segredo: No servidor, gere uma chave secreta única para o usuário (usando bibliotecas como speakeasy ou otplib).
+Gerar QR Code: Converta essa chave em uma URL otpauth:// e gere a imagem do QR Code com a biblioteca qrcode.
+Verificação: O usuário insere o código de 6 dígitos gerado no app; seu servidor valida esse código contra o segredo salvo no banco. 
+DEV Community
+DEV Community
+ +4
+ "Login via Mobile"
+Neste fluxo, o navegador exibe um QR Code que, ao ser escaneado por um app já logado, autentica a sessão web. 
+OwnID
+OwnID
+ +1
+Sessão Pendente: O frontend Next.js solicita um sessionId único ao servidor e o exibe como QR Code.
+Polling ou WebSockets: O frontend fica "ouvindo" (via Socket.io ou requisições repetidas) se aquela sessão foi autorizada.
+Escaneamento: O aplicativo móvel do usuário (já autenticado) escaneia o código e envia uma requisição ao servidor confirmando: "Eu (User X) autorizo a sessão Y".
+Login Concluído: O servidor atualiza o status da sessão Y, e o frontend redireciona o usuário para o dashboard. 
+1Kosmos
+1Kosmos
+ +4
+Bibliotecas Recomendadas
+Autenticação: Auth.js (v5/Beta para Next 15).
+Geração de QR: qrcode ou react-qr-code.
+Leitura de QR (Mobile/Web): html5-qrcode ou SDKs como o da Dynamsoft. 

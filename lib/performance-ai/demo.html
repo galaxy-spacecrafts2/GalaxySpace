@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA de Otimização de Desempenho - Demo</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .metric-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4ade80;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .prediction-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-transform: uppercase;
+        }
+        
+        .prediction-ruim {
+            background: #ef4444;
+        }
+        
+        .prediction-bom {
+            background: #3b82f6;
+        }
+        
+        .prediction-excelente {
+            background: #10b981;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .performance-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .performance-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .performance-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 IA de Otimização de Desempenho</h1>
+        
+        <div class="status-card">
+            <h3>Status da IA</h3>
+            <div id="status">
+                <div class="loading"></div> Inicializando...
+            </div>
+        </div>
+        
+        <div class="status-card">
+            <h3>Métricas de Desempenho</h3>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-value" id="cpu-metric">-</div>
+                    <div class="metric-label">CPU</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="memory-metric">-</div>
+                    <div class="metric-label">Memória</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="gpu-metric">-</div>
+                    <div class="metric-label">GPU</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value" id="connection-metric">-</div>
+                    <div class="metric-label">Conexão</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-card">
+            <h3>Previsão da IA</h3>
+            <div id="prediction">
+                <div class="loading"></div> Analisando...
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="runAnalysis()">🔍 Analisar Desempenho</button>
+            <button onclick="forceOptimization('ruim')">🔴 Forçar Ruim</button>
+            <button onclick="forceOptimization('bom')">🔵 Forçar Bom</button>
+            <button onclick="forceOptimization('excelente')">🟢 Forçar Excelente</button>
+            <button onclick="toggleMonitoring()">📊 Toggle Monitoramento</button>
+            <button onclick="resetOptimizations()">🔄 Resetar Otimizações</button>
+        </div>
+        
+        <div class="performance-content">
+            <div class="performance-item pulse">
+                <h4>🖼️ Imagens</h4>
+                <p>Teste de otimização de imagens</p>
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzNyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2U8L3RleHQ+PC9zdmc+" alt="Teste">
+            </div>
+            
+            <div class="performance-item">
+                <h4>🎨 Animações</h4>
+                <p>Este elemento tem animações CSS</p>
+            </div>
+            
+            <div class="performance-item">
+                <h4>🌈 Gradientes</h4>
+                <p style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1); padding: 10px; border-radius: 5px;">
+                    Gradiente complexo
+                </p>
+            </div>
+            
+            <div class="performance-item">
+                <h4>📹 Vídeo</h4>
+                <video width="100" height="100" controls muted loop>
+                    <source src="data:video/mp4;base64," type="video/mp4">
+                    Vídeo de teste
+                </video>
+            </div>
+        </div>
+        
+        <div class="log" id="log">
+            Console de logs da IA...
+        </div>
+    </div>
+
+    <script type="module">
+        import { PerformanceAI } from './index.js';
+        
+        let performanceAI;
+        let isMonitoring = false;
+        
+        // Inicializar a IA
+        async function initializeAI() {
+            try {
+                performanceAI = new PerformanceAI({
+                    autoOptimize: true,
+                    continuousMonitoring: false
+                });
+                
+                // Configurar callbacks
+                performanceAI.onPerformanceUpdate((data) => {
+                    updateUI(data);
+                    log('Atualização de desempenho', data);
+                });
+                
+                performanceAI.onOptimizationApplied((prediction) => {
+                    log('Otimização aplicada', prediction);
+                });
+                
+                await performanceAI.initialize();
+                
+                document.getElementById('status').innerHTML = '✅ IA inicializada e pronta!';
+                log('IA de desempenho inicializada com sucesso');
+                
+            } catch (error) {
+                document.getElementById('status').innerHTML = '❌ Erro na inicialização';
+                log('Erro ao inicializar IA:', error);
+            }
+        }
+        
+        function updateUI(data) {
+            // Atualizar métricas
+            document.getElementById('cpu-metric').textContent = (data.metrics.cpu * 100).toFixed(0) + '%';
+            document.getElementById('memory-metric').textContent = (data.metrics.memory * 100).toFixed(0) + '%';
+            document.getElementById('gpu-metric').textContent = (data.metrics.gpu * 100).toFixed(0) + '%';
+            document.getElementById('connection-metric').textContent = (data.metrics.connection * 100).toFixed(0) + '%';
+            
+            // Atualizar previsão
+            const prediction = data.prediction;
+            const predictionElement = document.getElementById('prediction');
+            
+            predictionElement.innerHTML = `
+                <div class="prediction-badge prediction-${prediction.class}">
+                    ${prediction.class} (${(prediction.confidence * 100).toFixed(1)}%)
+                </div>
+                <div style="margin-top: 10px; font-size: 12px;">
+                    Ruim: ${(prediction.probabilities.ruim * 100).toFixed(1)}% | 
+                    Bom: ${(prediction.probabilities.bom * 100).toFixed(1)}% | 
+                    Excelente: ${(prediction.probabilities.excelente * 100).toFixed(1)}%
+                </div>
+            `;
+        }
+        
+        function log(message, data = null) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            
+            if (data) {
+                logElement.innerHTML += logEntry + '\n' + JSON.stringify(data, null, 2) + '\n\n';
+            } else {
+                logElement.innerHTML += logEntry + '\n';
+            }
+            
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        // Funções globais para os botões
+        window.runAnalysis = async function() {
+            if (!performanceAI) {
+                log('IA não inicializada');
+                return;
+            }
+            
+            log('Iniciando análise manual...');
+            const result = await performanceAI.analyzeAndOptimize();
+            updateUI(result);
+        };
+        
+        window.forceOptimization = async function(level) {
+            if (!performanceAI) {
+                log('IA não inicializada');
+                return;
+            }
+            
+            log(`Forçando otimização para nível: ${level}`);
+            await performanceAI.forceOptimization(level);
+        };
+        
+        window.toggleMonitoring = function() {
+            if (!performanceAI) {
+                log('IA não inicializada');
+                return;
+            }
+            
+            isMonitoring = !isMonitoring;
+            performanceAI.setContinuousMonitoring(isMonitoring);
+            log(`Monitoramento contínuo ${isMonitoring ? 'ativado' : 'desativado'}`);
+        };
+        
+        window.resetOptimizations = function() {
+            if (!performanceAI) {
+                log('IA não inicializada');
+                return;
+            }
+            
+            performanceAI.resetOptimizations();
+            log('Otimizações resetadas');
+        };
+        
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeAI);
+    </script>
+</body>
+</html>

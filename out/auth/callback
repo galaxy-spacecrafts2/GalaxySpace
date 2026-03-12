@@ -1,0 +1,14 @@
+
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta http-equiv="refresh" content="0; url=https://galaxy-spacecrafts.vercel.app/community" />
+        <script>
+          window.location.href = 'https://galaxy-spacecrafts.vercel.app/community';
+        </script>
+      </head>
+      <body>
+        <p>Redirecting to Galaxy Spacecrafts community...</p>
+      </body>
+    </html>
+  

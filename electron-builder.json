@@ -1,0 +1,49 @@
+{
+  "appId": "com.galaxy.spacecrafts",
+  "productName": "Galaxy SpaceCrafts",
+  "copyright": "Copyright (C) 2026 Galaxy SpaceCrafts",
+  "directories": {
+    "output": "dist-electron",
+    "buildResources": "electron/assets"
+  },
+  "files": [
+    "electron/**/*",
+    ".next/**/*",
+    "public/**/*",
+    "package.json"
+  ],
+  "extraMetadata": {
+    "main": "electron/main.js"
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ],
+    "artifactName": "${productName}-${version}-${arch}.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": true,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Galaxy SpaceCrafts"
+  },
+  "mac": {
+    "target": ["dmg", "zip"],
+    "category": "public.app-category.utilities",
+    "artifactName": "${productName}-${version}-mac.${ext}"
+  },
+  "linux": {
+    "target": ["AppImage", "deb"],
+    "category": "Utility",
+    "artifactName": "${productName}-${version}-linux.${ext}"
+  },
+  "publish": {
+    "provider": "github",
+    "releaseType": "release"
+  }
+}
